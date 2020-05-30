@@ -19,7 +19,7 @@ public class TowerContainer {
         for (Tower tower : towerList) {
             tower.getProjectile().afficher(g);
             if (tower.getAfficherPortee()) {
-                tower.afficherPortee(g);
+                tower.showRange(g);
             }
         }
     }

@@ -2,47 +2,43 @@ package towerDef.actor;
 
 import org.newdawn.slick.*;
 import towerDef.Map;
+import towerDef.graphical.Movable;
+import towerDef.graphical.LifeBar;
 
 
-public class Mob {
+public class Mob extends Movable {
     private int id;
-    private int valeur;
-    private int taille;
-    private float vitesse;
-    private float x;
-    private float y;
+    private int value;
+    private int size;
+    private float speed;
     private int xCible, yCible;
     private float mult1, mult2;
-    private float baseVie;
-    private float vie;
     private int numNoeud = 0;
     private int noeudChemin = 0;
     private Boolean isPathEnded = false;
-    private SpriteSheet skin;
-    private Animation anim;
+    private LifeBar lifeBar;
 
-    public Mob(int coordX, int coordY, float vie, int taille, int id, float vitesse, int valeur) throws SlickException {
-        this.valeur = valeur;
-        this.vitesse = vitesse;
+    public Mob(int coordX, int coordY, float currentLife, int size, int id, float speed, int value) throws SlickException {
+        this.value = value;
+        this.speed = speed;
         this.id = id;
-        this.taille = taille;
-        baseVie = vie;
-        this.vie = vie;
-        x = coordX;
-        y = coordY;
-        xCible = 0;
-        yCible = 0;
-        mult1 = 0;
-        mult2 = 0;
+        this.size = size;
+        this.lifeBar = new LifeBar(x, y, currentLife);
+        this.x = coordX;
+        this.y = coordY;
+        this.xCible = 0;
+        this.yCible = 0;
+        this.mult1 = 0;
+        this.mult2 = 0;
         //System.out.println("ID : "+id);
-        if (vie <= 250)
-            skin = new SpriteSheet("textures/testMob.png", taille, taille);
-        else if (vitesse > 0.05f)
-            skin = new SpriteSheet("textures/testMob2.png", taille, taille);
-        else if (vie <= 10000 && vitesse < 0.05f)
-            skin = new SpriteSheet("textures/testMob3.png", taille, taille);
+        if (currentLife <= 250)
+            skin = new SpriteSheet("textures/testMob.png", size, size);
+        else if (speed > 0.05f)
+            skin = new SpriteSheet("textures/testMob2.png", size, size);
+        else if (currentLife <= 10000 && speed < 0.05f)
+            skin = new SpriteSheet("textures/testMob3.png", size, size);
         else
-            skin = new SpriteSheet("textures/testMob.png", taille, taille);
+            skin = new SpriteSheet("textures/testMob.png", size, size);
         anim = new Animation(skin, 300);
     }
 
@@ -90,7 +86,7 @@ public class Mob {
             if (x - 5 <= xCible && xCible <= x + 5 && y - 5 <= yCible && yCible <= y + 5) {
                 if (numNoeud > 0)
                     if (map.getPath().get(numNoeud - 1) == 99) {
-                        vie = 0;
+                        lifeBar.setCurrentLife(0);
                         isPathEnded = true;
                     }
 
@@ -121,10 +117,11 @@ public class Mob {
             if (xCible != x && yCible != y && mult1 != 0 && mult2 != 0) {
                 //System.out.println("x = "+x+" y = "+y);
                 //System.out.println("mult1 = "+mult1+" mult2 = "+mult2);
-                x = x + (mult1 * vitesse * delta);
-                y = y + (mult2 * vitesse * delta);
+                x = x + (mult1 * speed * delta);
+                y = y + (mult2 * speed * delta);
             }
         }
+        lifeBar.update(this.x, this.y);
     }
 
     public int getId() {
@@ -132,29 +129,25 @@ public class Mob {
     }
 
     public Boolean enVie() {
-        return !(vie <= 0);
+        return !(lifeBar.getCurrentLife() <= 0);
     }
 
     public void retirerVie(float dommage) {
-        vie = vie - dommage;
+        this.lifeBar.setCurrentLife(this.lifeBar.getCurrentLife() - dommage);
     }
 
-    public void afficher(Graphics g) {
-        anim.draw(x, y);
+    public void show(Graphics g) {
+        super.show(g);
         //g.drawRect(x, y, 5, 5);
-        g.setColor(Color.red);
-        g.drawRect(x - 5, y - 6, 20, 0);
-        g.setColor(Color.green);
-        g.drawRect(x - 5, y - 6, (20 * (vie)) / baseVie, 0);
-        g.setColor(Color.white);
+        this.lifeBar.show(g);
     }
 
     public Boolean getIsPathEnded() {
         return isPathEnded;
     }
 
-    public int getValeur() {
-        return valeur;
+    public int getValue() {
+        return value;
     }
 
     public float getX() {

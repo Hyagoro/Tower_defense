@@ -18,10 +18,10 @@ import java.io.IOException;
 public class JeuClient extends BasicGameState {
     private ListeMobs listeMobs;
     private Camera camera;
-    private InfoGame ip;
-    private TowerContainer tc;
-    private MobContainer mc;
-    private SpawnManager gs;
+    private InfoGame infoGame;
+    private TowerContainer towerContainer;
+    private MobContainer mobContainer;
+    private SpawnManager spawnManager;
     private Map map;
 
     private Client client;
@@ -34,11 +34,11 @@ public class JeuClient extends BasicGameState {
 
 
     public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException {
-        camera.rendu(g);
+        camera.render(g);
         map.show();
-        tc.afficherProjectiles(g, map);
-        mc.show(g);
-        ip.show(g, gs, camera.getxActuel(), camera.getyActuel());
+        towerContainer.afficherProjectiles(g, map);
+        mobContainer.show(g);
+        infoGame.show(g, spawnManager, camera.getxActuel(), camera.getyActuel());
     }
 
 
@@ -58,9 +58,9 @@ public class JeuClient extends BasicGameState {
 
 
         map = new Map(2000, 2000, 50);
-        ip = new InfoGame(gc.getWidth(), gc.getHeight());
-        tc = new TowerContainer();
-        mc = new MobContainer();
+        infoGame = new InfoGame(gc.getWidth(), gc.getHeight());
+        towerContainer = new TowerContainer();
+        mobContainer = new MobContainer();
         //gs = new GestionnaireSpawn();
         camera = new Camera(gc.getWidth(), gc.getHeight());
 
@@ -76,7 +76,7 @@ public class JeuClient extends BasicGameState {
                 }
                 if (object instanceof ListeMobs) {
                     try {
-                        mc.add(150, 0.05f, 10);
+                        mobContainer.add(150, 0.05f, 10);
                     } catch (SlickException e) {
                         e.printStackTrace();
                     }
@@ -103,14 +103,14 @@ public class JeuClient extends BasicGameState {
     }
 
     public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException {
-        ip.update(delta);
-        mc.update(delta, ip, map);
-        tc.update(delta, mc);
+        infoGame.update(delta);
+        mobContainer.update(delta, infoGame, map);
+        towerContainer.update(delta, mobContainer);
         //gs.update(delta,mc,ip,ip.a);
     }
 
     public void mouseClicked(int button, int x, int y, int clickCount) {
-        tc.event(button, x - camera.getxActuel(), y - camera.getyActuel(), clickCount, map, ip);
+        towerContainer.event(button, x - camera.getxActuel(), y - camera.getyActuel(), clickCount, map, infoGame);
         //carte.resoudre();
     }
 

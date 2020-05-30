@@ -2,48 +2,46 @@ package towerDef.actor;
 
 import org.newdawn.slick.*;
 import towerDef.MobContainer;
+import towerDef.graphical.Bloc;
 
-public class Tower {
-    private int x, y;
+public class Tower extends Bloc {
     private int prix;
-    SpriteSheet skin;
-    private Animation anim;
     Projectile projectile;
     private int portee;
     private int idCible;
-    private int taille;
     private int i;
     private int j;
     private int tempsTir;
     private int tempsRecharge;
     private int timerRecharge;
     private Boolean afficherPortee;
-    private Boolean collision;
     private Boolean ciblerTirer;//0cibler, 1tirer
     private Boolean recharge;
 
-    public Tower(int coordX, int coordY, int tailleTour) throws SlickException {
-        prix = 30;
-        tempsTir = 0;
-        tempsRecharge = 500;
-        timerRecharge = 0;
-        recharge = false;
-        afficherPortee = false;
-        collision = false;
-        ciblerTirer = false;
-        this.taille = tailleTour;
-        i = coordX / taille;
-        j = coordY / taille;
-        x = i * taille;
-        y = j * taille;
-        projectile = new Projectile(x + (taille / 2.f) - 2,
-                              y + (taille / 2.f) - 2, 40, 800, 5);
-        portee = 100;
-        skin = new SpriteSheet("textures/skinTour.png", tailleTour, tailleTour);
-        anim = new Animation(skin, 100);
+    public Tower(int x, int y, int towerSize) throws SlickException {
+        super((x / towerSize) * towerSize, (y / towerSize) * towerSize);
+
+        this.prix = 30;
+        this.tempsTir = 0;
+        this.tempsRecharge = 500;
+        this.timerRecharge = 0;
+        this.recharge = false;
+        this.afficherPortee = false;
+        this.collision = false;
+        this.ciblerTirer = false;
+
+        this.size = towerSize;
+        this.i = this.x / size;
+        this.j = this.y / size;
+
+        this.projectile = new Projectile(this.x + (size / 2.f) - 2,
+                              this.y + (size / 2.f) - 2, 40, 800, 5);
+        this.portee = 100;
+        this.skin = new SpriteSheet("textures/skinTour.png", towerSize, towerSize);
+        this.animation = new Animation(skin, 100);
     }
 
-    void recharge(int delta) {
+    private void recharge(int delta) {
         if (timerRecharge < tempsRecharge - tempsTir) {
             timerRecharge = timerRecharge + delta;
             recharge = true;
@@ -54,7 +52,7 @@ public class Tower {
         }
     }
 
-    int idMobLePlusProche(MobContainer mc) {
+    private int idMobLePlusProche(MobContainer mc) {
         int idMin = mc.get(0).getId();
         float min = distance(mc.get(0));
         for (int j = 0; j < mc.size(); j++) {
@@ -116,22 +114,22 @@ public class Tower {
 
     }
 
-    public void afficherPortee(Graphics g) {
+    public void showRange(Graphics g) {
         g.setColor(Color.green);
-        g.drawOval((x + taille / 2.f) - (portee), (y + taille / 2.f) - (portee), portee * 2, portee * 2);
+        g.drawOval((x + size / 2.f) - (portee), (y + size / 2.f) - (portee), portee * 2, portee * 2);
         g.setColor(new Color(0, 255, 0, 100));
-        g.fillOval((x + taille / 2.f) - (portee), (y + taille / 2.f) - (portee), portee * 2, portee * 2);
+        g.fillOval((x + size / 2.f) - (portee), (y + size / 2.f) - (portee), portee * 2, portee * 2);
         g.setColor(Color.white);
     }
 
     public void show() {
-        anim.draw(i * taille, j * taille);
+        animation.draw(i * size, j * size);
     }
 
     private float distance(Mob mob) {
-        return (float) Math.sqrt(((mob.getX() - (x + taille / 2.f)) *
-                     (mob.getX() - (x + taille / 2.f))) + ((mob.getY() - (y + taille / 2.f)) *
-                     (mob.getY() - (y + taille / 2.f))));
+        return (float) Math.sqrt(((mob.getX() - (x + size / 2.f)) *
+                     (mob.getX() - (x + size / 2.f))) + ((mob.getY() - (y + size / 2.f)) *
+                     (mob.getY() - (y + size / 2.f))));
     }
 
     public SpriteSheet getSkin() {

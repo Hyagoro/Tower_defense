@@ -19,7 +19,7 @@ public class MobContainer {
     void show(Graphics g) {
         for (Mob mob : mobList)
             if (mob.enVie()) {
-                mob.afficher(g);
+                mob.show(g);
             }
     }
 
@@ -31,7 +31,7 @@ public class MobContainer {
                 if (mob.getIsPathEnded()) {
                     infoGame.setNbLife(infoGame.getNbLife() - 1);
                 } else {
-                    infoGame.addMoney(mob.getValeur());
+                    infoGame.addMoney(mob.getValue());
                 }
                 toRemove.add(mob);
                 nbMobsDead++;

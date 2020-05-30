@@ -26,7 +26,7 @@ public class Camera {
         }
     }
 
-    void rendu(Graphics g) {
+    void render(Graphics g) {
         g.drawString("xAct : " + xActuel + "yAct : " + yActuel + "", 100, 100);
         g.translate(xActuel, yActuel);
     }

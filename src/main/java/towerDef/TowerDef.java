@@ -12,9 +12,9 @@ import org.newdawn.slick.state.StateBasedGame;
 public class TowerDef extends BasicGameState {
     private Camera camera;
     private InfoGame ip;
-    private TowerContainer tc;
-    private MobContainer mc;
-    private SpawnManager gs;
+    private TowerContainer towerContainer;
+    private MobContainer mobContainer;
+    private SpawnManager spawnManager;
     private Map map;
     private Boolean close = false;
 
@@ -24,36 +24,36 @@ public class TowerDef extends BasicGameState {
 
 
     public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException {
-        camera.rendu(g);
+        camera.render(g);
         map.show();
-        tc.afficherProjectiles(g, map);
-        mc.show(g);
-        ip.show(g, gs, camera.getxActuel(), camera.getyActuel());
+        towerContainer.afficherProjectiles(g, map);
+        mobContainer.show(g);
+        ip.show(g, spawnManager, camera.getxActuel(), camera.getyActuel());
     }
 
 
     public void init(GameContainer gc, StateBasedGame sbg) throws SlickException {
         map = new Map(800, 500, 50);
         ip = new InfoGame(gc.getWidth(), gc.getHeight());
-        tc = new TowerContainer();
-        mc = new MobContainer();
-        gs = new SpawnManager();
+        towerContainer = new TowerContainer();
+        mobContainer = new MobContainer();
+        spawnManager = new SpawnManager();
         camera = new Camera(800, 500);
 
     }
 
     public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException {
         ip.update(delta);
-        mc.update(delta, ip, map);
-        tc.update(delta, mc);
-        gs.update(delta, mc, ip, ip.a, map);
+        mobContainer.update(delta, ip, map);
+        towerContainer.update(delta, mobContainer);
+        spawnManager.update(delta, mobContainer, ip, ip.a, map);
         if (close)
             gc.exit();
 
     }
 
     public void mouseClicked(int button, int x, int y, int clickCount) {
-        tc.event(button, x - camera.getxActuel(), y - camera.getyActuel(), clickCount, map, ip);
+        towerContainer.event(button, x - camera.getxActuel(), y - camera.getyActuel(), clickCount, map, ip);
         //carte.resoudre();
     }
 
