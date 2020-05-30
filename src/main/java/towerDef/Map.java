@@ -2,6 +2,7 @@ package towerDef;
 
 import org.newdawn.slick.SlickException;
 import towerDef.actor.Tower;
+import towerDef.graphical.Tile;
 import towerDef.pathFinding.MazeSolver;
 
 import java.util.ArrayList;
